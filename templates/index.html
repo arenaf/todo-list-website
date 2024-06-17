@@ -1,58 +1,263 @@
 {% include "header.html" %}
 
-<div class="container">    
-  <div class="row">
-    <div class="col-sm-4">
-      <div class="panel panel-task">
-        <div class="panel-heading heading-task">TAREA</div>
-        <div class="panel-body body-task">
-          <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-        </div>
-        <div class="panel-footer footer-task">Marca la tarea que quieres realizar</div>
-      </div>
-    </div>
-    <div class="col-sm-4">
-      <div class="panel panel-task">
-        <div class="panel-heading heading-task">TAREA</div>
-        <div class="panel-body body-task"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image"></div>
-        <div class="panel-footer footer-task">Marca la tarea que quieres realizar</div>
-      </div>
-    </div>
-    <div class="col-sm-4">
-      <div class="panel panel-task">
-        <div class="panel-heading heading-task">TAREA</div>
-        <div class="panel-body body-task"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image"></div>
-        <div class="panel-footer footer-task">Marca la tarea que quieres realizar</div>
-      </div>
-    </div>
-    </div>
-  </div>
-<br>
 
-<div class="container">    
-  <div class="row">
-    <div class="col-sm-4">
-      <div class="panel panel-task">
-        <div class="panel-heading heading-task">TAREA</div>
-        <div class="panel-body body-task"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image"></div>
-        <div class="panel-footer footer-task">Marca la tarea que quieres realizar</div>
+<div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+  <div class="dropdown-menu d-block position-static pt-0 mx-0 rounded-3 shadow overflow-hidden w-280px" data-bs-theme="light">
+    <ul class="list-unstyled mb-0">
+      {% for task in todo_list %}
+      <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+        <div class="circle" style="background: {{ task.color}};"></div>
+        <span class="d-inline-block">{{ task.name_task }}</span>
+      </a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+
+<div class="container px-4 py-5">
+  <h2 class="pb-2 border-bottom">Tareas</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-5">
+      <div class="col d-flex align-items-start">
+        {% for task in todo_list %}
+        <div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+          <div class="dropdown-menu d-block position-static pt-0 mx-0 rounded-3 shadow overflow-hidden w-280px" data-bs-theme="light">
+
+            <ul class="list-unstyled mb-0 dropdown-item lign-items-center gap-2 py-2">
+              <li class="dropdown-item d-flex align-items-center gap-2 py-2"><div class="circle" style="background: {{ task.color}};"></div>
+                <span class="d-inline-block">{{ task.name_task }}</span>
+
+              </li>
+              <hr class="dropdown-divider">
+              {% if task.description_task %}
+              <li>{{ task.description_task }}</li>
+              {% endif %}
+              <li>{{ task.duration_task }}</li>
+              <li>{{ task.date_task }}</li>
+              <li>{{ task.time_task }}</li>
+
+            </ul>
+          </div>
+        </div>
+        {% endfor %}
       </div>
     </div>
-    <div class="col-sm-4">
-      <div class="panel panel-task">
-        <div class="panel-heading heading-task">TAREA</div>
-        <div class="panel-body body-task"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image"></div>
-        <div class="panel-footer footer-task">Marca la tarea que quieres realizar</div>
+</div>
+
+<div class="container px-4 py-5">
+  <h2 class="pb-2 border-bottom">Tareas</h2>
+<div class="table-responsive large px-5 py-5">
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Tarea</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">Duración</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Hora</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for task in todo_list %}
+            <tr>
+              <td><div class="circle" style="background: {{ task.color}};"></div></td>
+              <th scope="row">{{ task.name_task }}</th>
+              {% if task.description_task %}
+              <td>{{ task.description_task }}</td>
+              {% else %}
+              <td> </td>
+              {% endif %}
+              {% if task.duration_task %}
+              <td>{{ task.duration_task }}</td>
+              {% else %}
+              <td> </td>
+              {% endif %}
+              {% if task.date_task %}
+              <td>{{ task.date_task }}</td>
+              {% else %}
+              <td> </td>
+              {% endif %}
+              {% if task.time_task %}
+              <td>{{ task.time_task }}</td>
+              {% else %}
+              <td> </td>
+              {% endif %}
+              <td></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
       </div>
-    </div>
-    <div class="col-sm-4">
-      <div class="panel panel-task">
-        <div class="panel-heading heading-task">TAREA</div>
-        <div class="panel-body body-task"><img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image"></div>
-        <div class="panel-footer footer-task">Marca la tarea que quieres realizar</div>
+</div>
+
+
+
+<div class="container px-4 py-5" id="icon-grid">
+    <h2 class="pb-2 border-bottom">Icon grid</h2>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-5">
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-body-secondary flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#bootstrap"></use></svg>
+        <div>
+          <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">Featured title</h3>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-body-secondary flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#cpu-fill"></use></svg>
+        <div>
+          <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">Featured title</h3>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-body-secondary flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#calendar3"></use></svg>
+        <div>
+          <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">Featured title</h3>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-body-secondary flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#home"></use></svg>
+        <div>
+          <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">Featured title</h3>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-body-secondary flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#speedometer2"></use></svg>
+        <div>
+          <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">Featured title</h3>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-body-secondary flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#toggles2"></use></svg>
+        <div>
+          <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">Featured title</h3>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-body-secondary flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#geo-fill"></use></svg>
+        <div>
+          <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">Featured title</h3>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-body-secondary flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#tools"></use></svg>
+        <div>
+          <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">Featured title</h3>
+          <p>Paragraph of text beneath the heading to explain the heading.</p>
+        </div>
       </div>
     </div>
   </div>
-</div><br><br>
+
+
+
+
+
+
+
+
+
+
+<div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+  <div class="dropdown-menu d-block position-static pt-0 mx-0 rounded-3 shadow overflow-hidden w-280px" data-bs-theme="light">
+    <ul class="list-unstyled mb-0">
+      <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+        <div class="circle"></div>
+        <span class="d-inline-block"></span>
+        Action
+      </a></li>
+      <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+        <div class="circle"></div>
+        <span class="d-inline-block"></span>
+        Another action
+      </a></li>
+      <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+        <div class="circle" style="background: lightblue;"></div>
+        <span class="d-inline-block"></span>
+        Something else here
+      </a></li>
+      <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+        <div class="circle"></div>
+        <span class="d-inline-block"></span>
+        Separated link
+      </a></li>
+    </ul>
+  </div>
+
+  <div class="dropdown-menu d-block position-static border-0 pt-0 mx-0 rounded-3 shadow overflow-hidden w-280px" data-bs-theme="dark">
+    <form class="p-2 mb-2 bg-dark border-bottom border-dark">
+      <input type="search" class="form-control bg-dark" autocomplete="false" placeholder="Type to filter...">
+    </form>
+    <ul class="list-unstyled mb-0">
+      <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+        <span class="d-inline-block bg-success rounded-circle p-1"></span>
+        Action
+      </a></li>
+      <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+        <span class="d-inline-block bg-primary rounded-circle p-1"></span>
+        Another action
+      </a></li>
+      <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+        <span class="d-inline-block bg-danger rounded-circle p-1"></span>
+        Something else here
+      </a></li>
+      <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#">
+        <span class="d-inline-block bg-info rounded-circle p-1"></span>
+        Separated link
+      </a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="container px-4 py-5" id="featured-3">
+    <h2 class="pb-2 border-bottom">Columns with icons</h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+      <div class="feature col">
+        <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3">
+          <svg class="bi" width="1em" height="1em"><use xlink:href="#collection"></use></svg>
+        </div>
+
+        <h3 class="fs-2 text-body-emphasis">Featured title</h3>
+        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+
+          <a href="#" class="icon-link">
+          Call to action
+          <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
+        </a>
+      </div>
+      <div class="feature col">
+        <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3">
+          <svg class="bi" width="1em" height="1em"><use xlink:href="#people-circle"></use></svg>
+        </div>
+        <h3 class="fs-2 text-body-emphasis">Featured title</h3>
+        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+        <a href="#" class="icon-link">
+          Call to action
+          <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
+        </a>
+      </div>
+      <div class="feature col">
+        <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-2 mb-3">
+          <svg class="bi" width="1em" height="1em"><use xlink:href="#toggles2"></use></svg>
+        </div>
+        <h3 class="fs-2 text-body-emphasis ">Featured title</h3>
+        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+        <a href="#" class="icon-link">
+          Call to action
+          <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+
 
 {% include "footer.html" %}
