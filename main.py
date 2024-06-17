@@ -1,11 +1,12 @@
-import sqlite3
-
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_bootstrap import Bootstrap5
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, ForeignKey, insert
+
+from forms import RegisterForm
+# COLOR = ["#F72798", "#FF204E", "#FFF455", "#6420AA", "#007F73", "#00DFA2", "#0079FF", "#247881", "#FF5403", "#F7FD04"]
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1N-43lNWmnqwi893'
@@ -19,15 +20,6 @@ class Base(DeclarativeBase):
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///task.db'
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
-
-
-
-
-# with db.session.connect() as conn:
-#     query = ('INSERT INTO Color VALUES (("#F72798"), ("#FF204E"), ("#FFF455"), ("#6420AA"), ("#007F73"), ("#00DFA2"),'
-#              '("#0079FF"), ("#247881"), ("#FF5403"), ("#F7FD04"))')
-#     conn.execute(query)
-#     conn.commit()
 
 
 # Creación de tablas
@@ -55,14 +47,15 @@ class TodoList(db.Model):
     user = relationship("User", back_populates="task")
 
 
-class Color(db.Model):
-    __tablename__ = "color"
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name_color: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
+# class Color(db.Model):
+#     __tablename__ = "color"
+#     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+#     name_color: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
 
 
 with app.app_context():
     db.create_all()
+
 
 # with app.app_context():
 #     objects = [Color(name_color="#F72798"), Color(name_color="#FF204E"), Color(name_color="#FFF455"),
@@ -106,17 +99,50 @@ def home():
     return render_template("index.html", todo_list=todo_list)
 
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegisterForm()
+    if request.method == "POST":
+        new_task = TodoList(
+            name_task=form.name_task.data,
+            description_task=form.description_task.data,
+            duration_task=form.duration_task.data,
+            date_task=form.date_task.data,
+            time_task=form.time_task.data,
+            color=form.color.data,
+            user_id=1
+        )
+        db.session.add(new_task)
+        db.session.commit()
+
+        return redirect(url_for("home"))
+    return render_template("register.html", form=form)
+
+
+@app.route("/delete/<int:task>")
+def delete_task(task):
+    task_to_delete = db.get_or_404(TodoList, task)
+    db.session.delete(task_to_delete)
+    db.session.commit()
+    return redirect(url_for('home'))
+
 @app.route("/prueba")
 def head():
     return render_template("prueba.html")
 
 
-@app.route('/colors')
-def get_all_colors():
-    result = db.session.execute(db.select(Color))
-    colors = result.scalars().all()
-    return render_template("colors.html", all_colors=colors)
+# @app.route('/colors')
+# def get_all_colors():
+#     result = db.session.execute(db.select(Color))
+#     colors = result.scalars().all()
+#     return render_template("colors.html", all_colors=colors)
 
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+# TODO 1: modificar tarea
+# TODO 2: seleccionar un color
+# TODO 3:
