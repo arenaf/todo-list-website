@@ -61,13 +61,16 @@
               <th scope="col">Duración</th>
               <th scope="col">Fecha</th>
               <th scope="col">Hora</th>
+              <th scope="col"><abbr title="... Pendiente | ✓ Realizada | ✘ No Realizada"> Estado</abbr></th>
+              <th scope="col">Modificar</th>
+              <th scope="col"> Eliminar</th>
             </tr>
           </thead>
           <tbody>
           {% for task in todo_list %}
             <tr>
               <td><div class="circle" style="background: {{ task.color}};"></div></td>
-              <th scope="row">{{ task.name_task }}</th>
+              <th scope="row" >{{ task.name_task }}</th>
               {% if task.description_task %}
               <td>{{ task.description_task }}</td>
               {% else %}
@@ -88,7 +91,8 @@
               {% else %}
               <td> </td>
               {% endif %}
-              <td></td>
+              <td>{{ task.check_task }}</td>
+              <td><a class="btn" href="{{ url_for('edit_task', task=task.id) }}" role="button">✏️</a></td>
               <td><a class="btn" href="{{ url_for('delete_task', task=task.id) }}" role="button">🗑️</a></td>
             </tr>
           {% endfor %}

@@ -2,7 +2,11 @@
 {% include "header.html" %}
 
 <div class="container px-4 py-5">
-  <h2 class="pb-2 border-bottom">Nueva Tarea</h2>
+    {% if edit: %}
+        <h2 class="pb-2 border-bottom">Modificar Tarea</h2>
+    {% else: %}
+        <h2 class="pb-2 border-bottom">Nueva Tarea</h2>
+    {% endif %}
 </div>
 <main class="mb-4 ">
   <div class="container">
@@ -13,11 +17,10 @@
       </div>
       </div>
     </div>
-  </div>
 </main>
 
 <div class="dropdown show">
-    <div class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <div class="btn btn-secondary dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Color
           </div>
           <ul class="dropdown-menu">
