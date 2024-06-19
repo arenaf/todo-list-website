@@ -6,7 +6,8 @@ from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, ForeignKey, Date, Time, Boolean
 
 from forms import RegisterForm
-# COLOR = ["#F72798", "#FF204E", "#FFF455", "#6420AA", "#007F73", "#00DFA2", "#0079FF", "#247881", "#FF5403", "#F7FD04"]
+COLOR = ["#F72798", "#FF204E", "#FFF455", "#6420AA", "#007F73", "#00DFA2", "#0079FF", "#247881", "#FF5403", "#F7FD04"]
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1N-43lNWmnqwi893'
@@ -43,8 +44,9 @@ class TodoList(db.Model):
     date_task: Mapped[Date] = mapped_column(Date, nullable=True)
     # time_task: Mapped[str] = mapped_column(String(250), nullable=True)
     time_task: Mapped[Time] = mapped_column(Time, nullable=True)
-    color: Mapped[str] = mapped_column(String(250), nullable=True)
-    check_task: Mapped[str] = mapped_column(String(4), default="...")
+    check_task: Mapped[bool] = mapped_column(Boolean, default=False)
+    # color: Mapped[str] = mapped_column(String(250), nullable=True)
+    # check_task: Mapped[str] = mapped_column(String(4), default="...")
 
     # Relationship between the task and users tables
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
@@ -100,8 +102,21 @@ def load_user(user_id):
 def home():
     result = db.session.execute(db.select(TodoList))
     todo_list = result.scalars().all()
+    for list in todo_list:
+        print("check: ", list.check_task)
     return render_template("index.html", todo_list=todo_list)
 
+@app.route("/complete-task")
+def complete_task():
+    result = db.session.execute(db.select(TodoList))
+    todo_list = result.scalars().all()
+    return render_template("status_task.html", todo_list=todo_list, pending=False)
+
+@app.route("/pending-task")
+def pending_task():
+    result = db.session.execute(db.select(TodoList))
+    todo_list = result.scalars().all()
+    return render_template("status_task.html", todo_list=todo_list, pending=True)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -113,8 +128,8 @@ def register():
             duration_task=form.duration_task.data,
             date_task=form.date_task.data,
             time_task=form.time_task.data,
-            color=form.color.data,
-            check_task=form.check_task.data,
+            #color=form.color.data,
+            check_task=False,
             user_id=1
         )
         db.session.add(new_task)
@@ -133,8 +148,8 @@ def edit_task(task):
         duration_task=task_to_edit.duration_task,
         date_task=task_to_edit.date_task,
         time_task=task_to_edit.time_task,
-        color=task_to_edit.color,
-        check_task=task_to_edit.check_task,
+        #color=task_to_edit.color,
+        #check_task=task_to_edit.check_task,
     )
     if edit_task.validate_on_submit():
         task_to_edit.name_task = edit_task.name_task.data
@@ -142,12 +157,19 @@ def edit_task(task):
         task_to_edit.duration_task = edit_task.duration_task.data
         task_to_edit.date_task = edit_task.date_task.data
         task_to_edit.time_task = edit_task.time_task.data
-        task_to_edit.color = edit_task.color.data
-        task_to_edit.check_task = edit_task.check_task.data
+        #task_to_edit.color = edit_task.color.data
+        #task_to_edit.check_task = edit_task.check_task.data
         db.session.commit()
         return redirect(url_for("home", task=task_to_edit.id))
     return render_template("register.html", form=edit_task, edit=True)
 
+
+@app.route("/update/<int:task>", methods=["GET", "POST"])
+def update(task):
+    update_state = db.get_or_404(TodoList, task)
+    update_state.check_task = True
+    db.session.commit()
+    return redirect(url_for("home"))
 
 @app.route("/delete/<int:task>")
 def delete_task(task):

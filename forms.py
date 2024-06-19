@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, TimeField, DateField
+from wtforms import StringField, SubmitField, SelectField, TimeField, DateField, BooleanField
 from wtforms.validators import DataRequired
 
 COLOR = ["#F72798", "#FF204E", "#FFF455", "#6420AA", "#007F73", "#00DFA2", "#0079FF", "#247881", "#FF5403", "#F7FD04"]
@@ -13,8 +13,8 @@ class RegisterForm(FlaskForm):
     duration_task = StringField("Duración")
     date_task = DateField("Fecha")
     time_task = TimeField("Hora", format='%H:%M')
-    color = SelectField("Etiqueta", choices=COLOR)
-    check_task = SelectField("Etiqueta", choices=CHECK)
+    # color = SelectField("Etiqueta", choices=COLOR)
+    # check_task = SelectField("Etiqueta", choices=CHECK)
     submit = SubmitField("Aceptar")
 
 

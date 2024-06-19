@@ -9,6 +9,7 @@
     {% endif %}
 </div>
 <main class="mb-4 ">
+
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
@@ -19,20 +20,21 @@
     </div>
 </main>
 
-<div class="dropdown show">
-    <div class="btn btn-secondary dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+<div class="dropdown show col-lg-8 col-md-10 mx-auto">
+    <div class="btn btn-secondary dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="true">
             Color
           </div>
           <ul class="dropdown-menu">
-          {% for c in color %}
-            <li><div class="dropdown-item d-flex align-items-center" >
-                    <button name="backg" class="circle" style="background: {{ c }};"></button>
-                  </div>
+              {% for c in color %}
+                <li><div class="circle" style="background: {{ c }};"></div></li>
 
-                </li>
-          {% endfor %}
-          </ul>
+              {% endfor %}
+            </ul>
 </div>
+
+
+
 
 
 {% include "footer.html" %}
