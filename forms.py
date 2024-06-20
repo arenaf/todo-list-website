@@ -1,31 +1,27 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, TimeField, DateField, BooleanField, PasswordField
+from wtforms import StringField, SubmitField, TimeField, DateField, PasswordField
 from wtforms.validators import DataRequired
 
-COLOR = ["#F72798", "#FF204E", "#FFF455", "#6420AA", "#007F73", "#00DFA2", "#0079FF", "#247881", "#FF5403", "#F7FD04"]
-CHECK = ["...", "✓", "✘",]
+# Formularios creados con WTForms
 
-
-# WTForm: se crea el formulario para añadir nueva tarea
+# Formulario que añade una nueva tarea
 class RegisterForm(FlaskForm):
     name_task = StringField("Tarea", validators=[DataRequired()])
     description_task = StringField("Descripción")
     duration_task = StringField("Duración")
     date_task = DateField("Fecha")
     time_task = TimeField("Hora", format='%H:%M')
-    # color = SelectField("Etiqueta", choices=COLOR)
-    # check_task = SelectField("Etiqueta", choices=CHECK)
     submit = SubmitField("Aceptar")
 
 
-# Creación de nuevos usuarios. Formulario de registro
+# Creación de nuevos usuarios
 class NewUserForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
     password = PasswordField("Contraseña", validators=[DataRequired()])
     name = StringField("Nombre", validators=[DataRequired()])
     submit = SubmitField("Registrar")
 
-# Create a LoginForm to login existing users
+# Formulario login para usuarios que ya existen
 class LoginForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])

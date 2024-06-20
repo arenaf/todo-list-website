@@ -1,58 +1,42 @@
 {% include "header.html" %}
 
 <div class="container px-4 py-5">
-
+  <!-- Título -->
   <h2 class="pb-2 border-bottom">Tareas</h2>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-5">
-      <!-- Tareas pendientes -->
-      {% if pending %}
+
       {% for task in todo_list %}
+      {% if task.check_task == False: %} <!-- Se activa enlace a "editar" en caso de que la tarea esté pendiente -->
+      <a href="{{ url_for('edit_task', task=task.id) }}" style="text-decoration:none">
+      {% endif %}
+      <div class="col d-flex align-items-start align-items-center justify-content-center" >
+        <div class="card rounded-3 shadow position-static mb-3" style="width: 14rem; height: 13rem">
+          {% if task.check_task == True: %}
+          <h5 class="card-header" style="color:#FAF6F0; background-color:#55AD9B">{{ task.name_task }}</h5>
+          {% else %}
+          <h5 class="card-header" style="color:#343a40; background-color:#F6DCAC">{{ task.name_task }}</h5>
+          {% endif %}
+          <div class="card-body">
+
+            <h6 class="card-subtitle mb-2 text-body-secondary">{{ task.description_task }}</h6>
+            <ul>
+            <li class="card-text dropdown-item"><small class="text-body-secondary">Duración: {{ task.duration_task }}</small></li>
+            <li class="card-text dropdown-item"><small class="text-body-secondary">Fecha: {{ task.date_task }}</small></li>
+            <li class="card-text dropdown-item"><small class="text-body-secondary">Hora: {{ task.time_task }}</small></li>
+            {% if task.check_task == True: %}
+              <li class="card-text dropdown-item">COMPLETADA</li>
+            {% endif %}
+            </ul>
+          </div>
+        </div>
+      </div>
       {% if task.check_task == False: %}
-      <div class="col d-flex align-items-start align-items-center justify-content-center" >
-        <div class="card rounded-3 shadow position-static mb-3" style="width: 14rem; height: 13rem">
-          <h5 class="card-header" style="color:#FAF6F0; background-color:#343a40">{{ task.name_task }}</h5>
-          <div class="card-body">
-            <h5 class="card-title word-color" >{{ task.name_task }}</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">{{ task.description_task }}</h6>
-            <ul>
-            <li class="card-text dropdown-item"><small class="text-body-secondary">Duración: {{ task.duration_task }}</small></li>
-            <li class="card-text dropdown-item"><small class="text-body-secondary">Fecha: {{ task.date_task }}</small></li>
-            <li class="card-text dropdown-item"><small class="text-body-secondary">Hora: {{ task.time_task }}</small></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      </a>
       {% endif %}
       {% endfor %}
-      {% endif %}
-    <!-- Tareas completadas -->
-      {% if pending == False %}
-      {% for task in todo_list %}
-      {% if task.check_task == True: %}
-      <div class="col d-flex align-items-start align-items-center justify-content-center" >
-        <div class="card rounded-3 shadow position-static mb-3" style="width: 14rem; height: 13rem">
-          <h5 class="card-header" style="color:#FAF6F0; background-color:#343a40">{{ task.name_task }}</h5>
-          <div class="card-body">
-            <h5 class="card-title word-color" >{{ task.name_task }}</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">{{ task.description_task }}</h6>
-            <ul>
-            <li class="card-text dropdown-item"><small class="text-body-secondary">Duración: {{ task.duration_task }}</small></li>
-            <li class="card-text dropdown-item"><small class="text-body-secondary">Fecha: {{ task.date_task }}</small></li>
-            <li class="card-text dropdown-item"><small class="text-body-secondary">Hora: {{ task.time_task }}</small></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-      {% endfor %}
-      {% endif %}
     </div>
-
 </div>
-
-
-
 
 
 {% include "footer.html" %}

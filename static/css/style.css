@@ -1,33 +1,33 @@
-    /* Remove the navbar's default rounded borders and increase the bottom margin */
 
-    .navbar{
-      background-color: #343a40;
-    }
-    .navbar-brand, .nav-link{
-        color: #FAF6F0;
-    }
+.navbar{
+    background-color: #343a40;
+}
+.navbar-brand, .nav-link{
+    color: #FAF6F0;
+}
+.text-title{
+    color:#ffffff;
+    font-size:6em;
+}
 
-    /* Remove the jumbotron's default bottom margin */
-     .jumbotron {
-      margin-bottom: 0;
-      background-color: #FAF6F0;
-      color: #343a40
-    }
+.jumbotron {
+    margin-bottom: 0;
+}
 
-    .circle {
-        background: #F72798;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-    }
+.color-table{
+    background-color: #FAF6F0;
+}
 
-    .color-table{
-        background-color: #FAF6F0;
-    }
+body{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 
-    /* Add a gray background color and some padding to the footer */
-    footer {
-      background-color: #343a40;
-      padding: 25px;
-      color: #FAF6F0;
-    }
+}
+
+footer {
+  background-color: #343a40;
+  padding: 25px;
+  margin-top: auto;
+  color: #FAF6F0;
+}
