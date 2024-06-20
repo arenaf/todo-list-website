@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, TimeField, DateField, BooleanField
+from wtforms import StringField, SubmitField, SelectField, TimeField, DateField, BooleanField, PasswordField
 from wtforms.validators import DataRequired
 
 COLOR = ["#F72798", "#FF204E", "#FFF455", "#6420AA", "#007F73", "#00DFA2", "#0079FF", "#247881", "#FF5403", "#F7FD04"]
@@ -18,15 +18,15 @@ class RegisterForm(FlaskForm):
     submit = SubmitField("Aceptar")
 
 
-# # Create a RegisterForm to register new users
-# class RegisterForm(FlaskForm):
-#     email = StringField("Email", validators=[DataRequired()])
-#     password = PasswordField("Password", validators=[DataRequired()])
-#     name = StringField("Name", validators=[DataRequired()])
-#     submit = SubmitField("New user")
-#
-# # Create a LoginForm to login existing users
-# class LoginForm(FlaskForm):
-#     email = StringField("Email", validators=[DataRequired()])
-#     password = PasswordField("Password", validators=[DataRequired()])
-#     submit = SubmitField("Login")
+# Creación de nuevos usuarios. Formulario de registro
+class NewUserForm(FlaskForm):
+    email = StringField("Email", validators=[DataRequired()])
+    password = PasswordField("Contraseña", validators=[DataRequired()])
+    name = StringField("Nombre", validators=[DataRequired()])
+    submit = SubmitField("Registrar")
+
+# Create a LoginForm to login existing users
+class LoginForm(FlaskForm):
+    email = StringField("Email", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    submit = SubmitField("Login")

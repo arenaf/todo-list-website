@@ -10,51 +10,69 @@
 
   <link rel="stylesheet" href="../static/css/style.css">
 </head>
+
 <body>
-<!--
-<div class="jumbotron">
-  <div class="container text-center">
-    <h1>Online Store</h1>
-    <p>Mission, Vission & Values</p>
-  </div>
-</div>-->
-
-
-  <div class="p-5 text-center jumbotron">
+  <div class="p-3 text-center jumbotron" style="background-image: url(../static/assets/img/banner.png)">
     <div class="container py-5">
-      <h1 class="text-body-emphasis">Full-width jumbotron</h1>
-      <p class="col-lg-8 mx-auto lead">
-        This takes the basic jumbotron above and makes its background edge-to-edge with a <code>.container</code> inside to align content. Similar to above, it's been recreated with built-in grid and utility classes.
-      </p>
+
+      <p class="text-title">TODO LIST</p>
+
     </div>
   </div>
 
-
 <nav class="navbar navbar-expand-lg">
   <div class="container-fluid" >
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" href="{{ url_for('home') }}">TODO</a>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav">
+
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if current_user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="#">Features</a>
+          <a class="nav-link" href="{{ url_for('all_task') }}">Todas las tareas</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
+          <a class="nav-link" href="{{ url_for('only_complete') }}">Completadas</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('register') }}">Nueva tarea</a>
+        </li>
+        <ul class="navbar-nav">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown link
+            Vista tarjeta
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('pending_task') }}">Pendientes</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('complete_task') }}">Completadas</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('show_all_task') }}">Todas las tareas</a></li>
           </ul>
         </li>
+        </ul>
+        {% endif %}
+        </ul>
+
+      <ul class="navbar-nav">
+      {% if not current_user.is_authenticated %}
+        <li class="nav-item ">
+          <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('new_user_register') }}">Registro</a>
+        </li>
+      {% endif %}
+      {% if current_user.is_authenticated %}
+          <li class="nav-link"> Hola {{ current_user.name }} </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      {% endif %}
       </ul>
+
+
     </div>
   </div>
 </nav>

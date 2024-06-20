@@ -1,13 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash, abort
 from flask_bootstrap import Bootstrap5
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, ForeignKey, Date, Time, Boolean
-
-from forms import RegisterForm
-COLOR = ["#F72798", "#FF204E", "#FFF455", "#6420AA", "#007F73", "#00DFA2", "#0079FF", "#247881", "#FF5403", "#F7FD04"]
-
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
+from forms import RegisterForm, NewUserForm, LoginForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1N-43lNWmnqwi893'
@@ -16,8 +15,11 @@ Bootstrap5(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+
 class Base(DeclarativeBase):
     pass
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///task.db'
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
@@ -93,32 +95,122 @@ with app.app_context():
 #     db.session.commit()
 
 
+# VERDE 55AD9B ROSA ef476f amarillo F6DCAC
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.execute(db.select(User).where(User.id == user_id)).scalar()
 
 
+@app.route('/new-user', methods=["GET", "POST"])
+def new_user_register():
+    form = NewUserForm()
+    if request.method == "POST":
+        user = User.query.filter_by(email=request.form["email"]).first()
+
+        if user != None:
+            flash("¡Este email ya existe!")
+            return redirect(url_for("login"))
+
+        final_pass = generate_password_hash(password=request.form["password"], method="pbkdf2:sha256", salt_length=8)
+        new_user = User(
+            name=request.form["name"],
+            password=final_pass,
+            email=request.form["email"]
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user)
+        return redirect(url_for("home"))
+    return render_template("new_user.html", form=form, current_user=current_user)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
+# Login de usuario
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=request.form["email"]).first()
+        if user == None:
+            flash("¡No hay ningún usuario registrado con ese email!")
+            return redirect(url_for("login"))
+        if check_password_hash(user.password, request.form["password"]):
+            login_user(user)
+            return redirect(url_for("home"))
+        else:
+            flash("Password incorrecta. Inténtalo de nuevo")
+            return redirect(url_for("login"))
+    return render_template("login.html", form=form, current_user=current_user)
+
+# Función decorador solo los usuarios logueados pueden ver sus tareas
+def user_logged(function):
+    @wraps(function)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            flash("Debes loguearte para ver y crear tareas.")
+            return redirect(url_for("login"))
+        return function(*args, **kwargs)
+    return decorated_function
+
+# Vista formato tabla
 @app.route("/")
 def home():
-    result = db.session.execute(db.select(TodoList))
+    if current_user.is_authenticated:
+        result = db.session.execute(db.select(TodoList).where(TodoList.check_task == False).where(TodoList.user_id == current_user.id).order_by(TodoList.date_task))
+        todo_list = result.scalars().all()
+        return render_template("index.html", todo_list=todo_list, current_user=current_user)
+    return render_template("index.html", current_user=current_user)
+
+
+@app.route("/all_task")
+@user_logged
+def all_task():
+    result = db.session.execute(db.select(TodoList).where(TodoList.user_id == current_user.id).order_by(TodoList.date_task))
     todo_list = result.scalars().all()
-    for list in todo_list:
-        print("check: ", list.check_task)
     return render_template("index.html", todo_list=todo_list)
 
-@app.route("/complete-task")
-def complete_task():
-    result = db.session.execute(db.select(TodoList))
+
+@app.route("/only_complete")
+@user_logged
+def only_complete():
+    result = db.session.execute(db.select(TodoList).where(TodoList.check_task == True).where(TodoList.user_id == current_user.id).order_by(TodoList.date_task))
     todo_list = result.scalars().all()
-    return render_template("status_task.html", todo_list=todo_list, pending=False)
+    return render_template("index.html", todo_list=todo_list)
+
+
+# Cambio de vista
 
 @app.route("/pending-task")
+@user_logged
 def pending_task():
-    result = db.session.execute(db.select(TodoList))
+    result = db.session.execute(db.select(TodoList).where(TodoList.check_task == False).where(TodoList.user_id == current_user.id).order_by(TodoList.date_task))
     todo_list = result.scalars().all()
-    return render_template("status_task.html", todo_list=todo_list, pending=True)
+    return render_template("status_task.html", todo_list=todo_list)
+
+
+@app.route("/complete-task")
+@user_logged
+def complete_task():
+    result = db.session.execute(db.select(TodoList).where(TodoList.check_task == True).where(TodoList.user_id == current_user.id).order_by(TodoList.date_task))
+    todo_list = result.scalars().all()
+    return render_template("status_task.html", todo_list=todo_list)
+
+
+@app.route("/show-all-task")
+@user_logged
+def show_all_task():
+    result = db.session.execute(db.select(TodoList).where(TodoList.user_id == current_user.id).order_by(TodoList.date_task))
+    todo_list = result.scalars().all()
+    return render_template("status_task.html", todo_list=todo_list)
+
 
 @app.route("/register", methods=["GET", "POST"])
+@user_logged
 def register():
     form = RegisterForm()
     if request.method == "POST":
@@ -128,9 +220,9 @@ def register():
             duration_task=form.duration_task.data,
             date_task=form.date_task.data,
             time_task=form.time_task.data,
-            #color=form.color.data,
+            # color=form.color.data,
             check_task=False,
-            user_id=1
+            user_id=current_user.id
         )
         db.session.add(new_task)
         db.session.commit()
@@ -140,6 +232,7 @@ def register():
 
 
 @app.route("/edit-task/<int:task>", methods=["GET", "POST"])
+@user_logged
 def edit_task(task):
     task_to_edit = db.get_or_404(TodoList, task)
     edit_task = RegisterForm(
@@ -148,8 +241,8 @@ def edit_task(task):
         duration_task=task_to_edit.duration_task,
         date_task=task_to_edit.date_task,
         time_task=task_to_edit.time_task,
-        #color=task_to_edit.color,
-        #check_task=task_to_edit.check_task,
+        # color=task_to_edit.color,
+        # check_task=task_to_edit.check_task,
     )
     if edit_task.validate_on_submit():
         task_to_edit.name_task = edit_task.name_task.data
@@ -157,44 +250,35 @@ def edit_task(task):
         task_to_edit.duration_task = edit_task.duration_task.data
         task_to_edit.date_task = edit_task.date_task.data
         task_to_edit.time_task = edit_task.time_task.data
-        #task_to_edit.color = edit_task.color.data
-        #task_to_edit.check_task = edit_task.check_task.data
+        # task_to_edit.color = edit_task.color.data
+        # task_to_edit.check_task = edit_task.check_task.data
         db.session.commit()
         return redirect(url_for("home", task=task_to_edit.id))
     return render_template("register.html", form=edit_task, edit=True)
 
 
 @app.route("/update/<int:task>", methods=["GET", "POST"])
+@user_logged
 def update(task):
     update_state = db.get_or_404(TodoList, task)
     update_state.check_task = True
     db.session.commit()
     return redirect(url_for("home"))
 
+
 @app.route("/delete/<int:task>")
+@user_logged
 def delete_task(task):
     task_to_delete = db.get_or_404(TodoList, task)
     db.session.delete(task_to_delete)
     db.session.commit()
     return redirect(url_for('home'))
 
-@app.route("/prueba")
-def head():
-    return render_template("prueba.html")
-
-
-# @app.route('/colors')
-# def get_all_colors():
-#     result = db.session.execute(db.select(Color))
-#     colors = result.scalars().all()
-#     return render_template("colors.html", all_colors=colors)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
 
-
-
-# TODO 1: formatear fecha y hora
-# TODO 2: seleccionar un color
-# TODO 3: error update si no se introduce fecha y hora
+# TODO 1: cada usuario que muestre sus tareas
+# TODO 2: ver las funciones que se repiten
+# TODO 3: comentarios
+# TODO 4: documentación
