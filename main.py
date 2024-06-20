@@ -66,8 +66,11 @@ def new_user_register():
     form = NewUserForm()
     if request.method == "POST":
         user = User.query.filter_by(email=request.form["email"]).first()
+        if not form.validate():
+            flash("Email no válido.")
+            return redirect(url_for("new_user_register"))
         if user != None:
-            flash("¡Este email ya existe!")
+            flash("¡Este email ya existe! Loguéate para acceder a tus tareas.")
             return redirect(url_for("login"))
         final_pass = generate_password_hash(password=request.form["password"], method="pbkdf2:sha256", salt_length=8)
         new_user = User(
